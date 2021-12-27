@@ -5,7 +5,7 @@
 #include <stack>
 
 
-namespace Memory
+namespace Synacor::Memory
 {
     using Main      = std::array<Arch::Word, Arch::MaxWord>;
     using Stack     = std::stack<Arch::Word>;

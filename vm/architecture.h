@@ -7,7 +7,7 @@
 
 #include "thrower.h"
 
-namespace Arch
+namespace Synacor::Arch
 {
     using Register = int8_t;
     using Word     = uint16_t;
@@ -17,28 +17,6 @@ namespace Arch
     constexpr int  NumRegisters {8};
 
 
-    using Operand = std::variant<std::monostate, Word, Register>;
 
-
-    Operand decodeOperand(Arch::Word    word)
-    {
-        if(word <= Arch::MaxWord)
-        {
-            return word;
-        }
-
-        word %= Arch::Modulo;
-
-        if(word < Arch::NumRegisters)
-        {
-            return static_cast<Arch::Register>(NumRegisters);
-        }
-        else
-        {
-            throw_runtime_error("Invalid operand MaxWord+" + std::to_string(word));
-        }
-
-
-    }
 
 }

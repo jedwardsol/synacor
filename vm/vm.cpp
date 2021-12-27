@@ -1,0 +1,95 @@
+#include <string>
+#include <format>
+
+#include "vm.h"
+#include "thrower.h"
+
+
+using namespace Synacor;
+
+void VM::constructRamFromText(std::istream &memoryContents)
+{
+    std::string     number;
+    Arch::Word      address{};
+
+    while(std::getline(memoryContents,number,','))
+    {
+        auto word=stoi(number);
+
+        if(   word < 0
+           || word > Arch::MaxWord + Arch::NumRegisters)
+        {
+            throw_runtime_error(std::format("Bad source code {:x}",word));
+        }
+
+        ram[address]=word;
+        address++;
+
+    }
+}
+
+CPU::Operand VM::decodeOperand(Arch::Word    word)
+{
+    if(word <= Arch::MaxWord)
+    {
+        return word;
+    }
+
+    word %= Arch::Modulo;
+
+    if(word < Arch::NumRegisters)
+    {
+        return static_cast<Arch::Register>(Arch::NumRegisters);
+    }
+    else
+    {
+        throw_runtime_error(std::format("Invalid operand MaxWord+{}",word));
+    }
+}
+
+CPU::Instruction    VM::decodeInstruction()
+{
+    CPU::Instruction    instruction{};
+
+    instruction.opcode = static_cast<CPU::OpCode>(ram.at(pc));
+
+    auto const numOperands = CPU::numOperands.at(ram[pc]);                          // fault here on invalid opcode
+
+    instruction.length = 1 + numOperands;                              
+
+    for(int operand=0;operand < numOperands; operand++)
+    {
+        instruction.operands[operand] = decodeOperand (ram.at(pc+1+operand));
+    }
+
+    return instruction;
+}
+
+
+
+void VM::run()
+{
+    bool running{true};
+
+    while(running)
+    {
+        auto const &instruction{decodeInstruction()};
+
+        switch(instruction.opcode)
+        {
+        case CPU::OpCode::Halt:
+            return;
+
+        case CPU::OpCode::Noop:
+            break;
+
+
+        default:
+            throw_runtime_error(std::format("Invalid instruction {} at pc {}",static_cast<int>(instruction.opcode),pc));
+        }
+
+        pc+=instruction.length;
+    }
+
+
+}

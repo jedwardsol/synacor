@@ -6,11 +6,15 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{94096B8F-27B2-4240-BE4D-686A258778B2}"
 	ProjectSection(SolutionItems) = preProject
 		architecture.txt = architecture.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vm", "vm\vm.vcxproj", "{38A2A0D9-DE18-497D-A2EC-FE2F883A4E7F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "synacor", "synacor\synacor.vcxproj", "{A4911E98-6D8B-44A1-AE52-0683532DE046}"
+	ProjectSection(ProjectDependencies) = postProject
+		{38A2A0D9-DE18-497D-A2EC-FE2F883A4E7F} = {38A2A0D9-DE18-497D-A2EC-FE2F883A4E7F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
