@@ -17,6 +17,7 @@ public:
     enum class Source
     {
         text,       // comma delimited text
+        binary,     // 
 
     };
 
@@ -26,6 +27,10 @@ public:
         {
         case Source::text:
             constructRamFromText(memoryContents);
+            break;
+
+        case Source::binary:
+            constructRamFromBinary(memoryContents);
 
         }
     }
@@ -35,7 +40,8 @@ public:
 
 private:
 
-    void constructRamFromText(std::istream &memoryContents);
+    void constructRamFromText  (std::istream &memoryContents);
+    void constructRamFromBinary(std::istream &memoryContents);
 
 
 

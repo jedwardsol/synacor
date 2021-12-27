@@ -7,12 +7,12 @@
 
 using namespace Synacor;
 
-void VM::constructRamFromText(std::istream &memoryContents)
+void VM::constructRamFromText(std::istream &source)
 {
     std::string     number;
     Arch::Word      address{};
 
-    while(std::getline(memoryContents,number,','))
+    while(std::getline(source,number,','))
     {
         auto word=stoi(number);
 
@@ -27,6 +27,26 @@ void VM::constructRamFromText(std::istream &memoryContents)
 
     }
 }
+
+void VM::constructRamFromBinary(std::istream &source)
+{
+    Arch::Word      address{};
+    Arch::Word      word{};
+
+    while(source.read(reinterpret_cast<char*>(&word),sizeof(word)))
+    {
+        if(   word < 0
+           || word > Arch::MaxWord + Arch::NumRegisters)
+        {
+            throw_runtime_error(std::format("Bad source code {:x}",word));
+        }
+
+        ram[address]=word;
+        address++;
+    }
+}
+
+
 
 CPU::Operand VM::decodeOperand(Arch::Word    word)
 {
