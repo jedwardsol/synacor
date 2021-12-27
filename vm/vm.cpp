@@ -129,11 +129,18 @@ void VM::run()
 
         switch(instruction.opcode)
         {
+////
+// misc
+
         case CPU::OpCode::Halt:
             return;
 
         case CPU::OpCode::Noop:
             break;
+
+
+////
+// flow control
 
         case CPU::OpCode::Jmp:
             pc = valueOf(instruction.operands[0]);
@@ -165,17 +172,67 @@ void VM::run()
 
 
 
-
+////
+// I/O
 
         case CPU::OpCode::Out:
             std::cout << static_cast<char>(valueOf(instruction.operands[0]));
             break;
 
-        case CPU::OpCode::Add:
-        
-            reg(instruction.operands[0]) =   valueOf(instruction.operands[1])
-                                           + valueOf(instruction.operands[2]); 
+////
+// r/m
 
+        case CPU::OpCode::Set:
+            reg(instruction.operands[0]) =   valueOf(instruction.operands[1]);
+            break;
+
+        case CPU::OpCode::Push:
+            stack.push(valueOf(instruction.operands[0]));
+            break;
+
+        case CPU::OpCode::Pop:
+            reg(instruction.operands[0]) =   stack.top();
+            stack.pop();
+            break;
+
+
+
+////
+// Arithmetic
+
+
+        case CPU::OpCode::Eq:
+            reg(instruction.operands[0]) =    valueOf(instruction.operands[1])
+                                           == valueOf(instruction.operands[2]); 
+            break;
+
+        case CPU::OpCode::Gt:
+            reg(instruction.operands[0]) =   valueOf(instruction.operands[1])
+                                           > valueOf(instruction.operands[2]); 
+            break;
+
+        case CPU::OpCode::Add:
+            reg(instruction.operands[0]) = (  valueOf(instruction.operands[1])
+                                            + valueOf(instruction.operands[2])) % Arch::Modulo; 
+            break;
+
+        case CPU::OpCode::Mult:
+            reg(instruction.operands[0]) = (  valueOf(instruction.operands[1])
+                                            * valueOf(instruction.operands[2])) % Arch::Modulo; 
+            break;
+
+        case CPU::OpCode::And:
+            reg(instruction.operands[0]) = (  valueOf(instruction.operands[1])
+                                            & valueOf(instruction.operands[2])) ; 
+            break;
+
+        case CPU::OpCode::Or:
+            reg(instruction.operands[0]) = (  valueOf(instruction.operands[1])
+                                            | valueOf(instruction.operands[2])) ; 
+            break;
+
+        case CPU::OpCode::Not:
+            reg(instruction.operands[0]) = (~valueOf(instruction.operands[1])) & Arch::MaxWord ; 
             break;
 
 
