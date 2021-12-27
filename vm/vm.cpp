@@ -146,6 +146,19 @@ void VM::run()
             pc = valueOf(instruction.operands[0]);
             continue;                                       // continue, not break, since pc updated.
 
+        case CPU::OpCode::Call:
+
+            stack.push(pc + instruction.length);
+            pc = valueOf(instruction.operands[0]);
+            continue;                                       // continue, not break, since pc updated.
+
+        case CPU::OpCode::Ret:
+
+            pc = stack.top();
+            stack.pop();
+            continue;                                       // continue, not break, since pc updated.
+
+
         case CPU::OpCode::Jt:
             {
                 auto value = valueOf(instruction.operands[0]);
@@ -173,11 +186,20 @@ void VM::run()
 
 
 ////
-// I/O
+// I/O : todo : virtualise I/O
 
         case CPU::OpCode::Out:
             std::cout << static_cast<char>(valueOf(instruction.operands[0]));
             break;
+
+        case CPU::OpCode::In:
+            {            
+                char c;
+                std::cin.get(c);
+                reg(instruction.operands[0]) = c;
+            }
+            break;
+
 
 ////
 // r/m
@@ -195,7 +217,13 @@ void VM::run()
             stack.pop();
             break;
 
+        case CPU::OpCode::Rmem:
+            reg(instruction.operands[0]) =   ram.at(valueOf(instruction.operands[1]));
+            break;
 
+        case CPU::OpCode::Wmem:
+            ram.at(valueOf(instruction.operands[0])) =  valueOf(instruction.operands[1]);
+            break;
 
 ////
 // Arithmetic
@@ -219,6 +247,11 @@ void VM::run()
         case CPU::OpCode::Mult:
             reg(instruction.operands[0]) = (  valueOf(instruction.operands[1])
                                             * valueOf(instruction.operands[2])) % Arch::Modulo; 
+            break;
+
+        case CPU::OpCode::Mod:
+            reg(instruction.operands[0]) = (  valueOf(instruction.operands[1])
+                                            % valueOf(instruction.operands[2])); 
             break;
 
         case CPU::OpCode::And:
