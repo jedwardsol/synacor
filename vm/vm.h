@@ -42,7 +42,8 @@ private:
     CPU::Operand        decodeOperand    (Arch::Word    word);
     CPU::Instruction    decodeInstruction();
 
-
+    Arch::Word          read(CPU::Operand   operand);
+    Arch::Word         &reg (CPU::Operand   operand);
 
 private:
     Memory::Main        ram{};

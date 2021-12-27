@@ -39,7 +39,7 @@ CPU::Operand VM::decodeOperand(Arch::Word    word)
 
     if(word < Arch::NumRegisters)
     {
-        return static_cast<Arch::Register>(Arch::NumRegisters);
+        return static_cast<Arch::Register>(word);
     }
     else
     {
@@ -65,6 +65,38 @@ CPU::Instruction    VM::decodeInstruction()
     return instruction;
 }
 
+Arch::Word VM::read(CPU::Operand   operand)
+{
+    if(std::holds_alternative<Arch::Word>(operand))
+    {
+        return std::get<Arch::Word>(operand);
+    }
+    else if(std::holds_alternative<Arch::Register>(operand))
+    {
+        auto regnum = std::get<Arch::Register>(operand);
+
+        return registers.at(regnum);
+    }
+    else
+    {
+        throw_runtime_error("Invalid operand type for reading");
+    }
+}
+
+Arch::Word &VM::reg(CPU::Operand   operand)
+{
+    if(std::holds_alternative<Arch::Register>(operand))
+    {
+        auto regnum = std::get<Arch::Register>(operand);
+
+        return registers.at(regnum);
+    }
+    else
+    {
+        throw_runtime_error("Invalid operand type for writing");
+    }
+}
+
 
 
 void VM::run()
@@ -81,6 +113,17 @@ void VM::run()
             return;
 
         case CPU::OpCode::Noop:
+            break;
+
+        case CPU::OpCode::Out:
+            std::cout << static_cast<char>(read(instruction.operands[0]));
+            break;
+
+        case CPU::OpCode::Add:
+        
+            reg(instruction.operands[0]) =   read(instruction.operands[1])
+                                           + read(instruction.operands[2]); 
+
             break;
 
 
