@@ -31,24 +31,20 @@ public:
 
         case Source::binary:
             constructRamFromBinary(memoryContents);
-
         }
     }
 
     void run();
-
 
 private:
 
     void constructRamFromText  (std::istream &memoryContents);
     void constructRamFromBinary(std::istream &memoryContents);
 
-
-
     CPU::Operand        decodeOperand    (Arch::Word    word);
     CPU::Instruction    decodeInstruction();
 
-    Arch::Word          read(CPU::Operand   operand);
+    Arch::Word          valueOf(CPU::Operand   operand);
     Arch::Word         &reg (CPU::Operand   operand);
 
 private:

@@ -85,7 +85,7 @@ CPU::Instruction    VM::decodeInstruction()
     return instruction;
 }
 
-Arch::Word VM::read(CPU::Operand   operand)
+Arch::Word VM::valueOf(CPU::Operand   operand)
 {
     if(std::holds_alternative<Arch::Word>(operand))
     {
@@ -135,14 +135,46 @@ void VM::run()
         case CPU::OpCode::Noop:
             break;
 
+        case CPU::OpCode::Jmp:
+            pc = valueOf(instruction.operands[0]);
+            continue;                                       // continue, not break, since pc updated.
+
+        case CPU::OpCode::Jt:
+            {
+                auto value = valueOf(instruction.operands[0]);
+
+                if(value)
+                {
+                    pc = valueOf(instruction.operands[1]);
+                    continue;                                       // continue, not break, since pc updated.
+                }
+            }
+            break;
+
+        case CPU::OpCode::Jf:
+            {
+                auto value = valueOf(instruction.operands[0]);
+
+                if(!value)
+                {
+                    pc = valueOf(instruction.operands[1]);
+                    continue;                                       // continue, not break, since pc updated.
+                }
+            }
+            break;
+
+
+
+
+
         case CPU::OpCode::Out:
-            std::cout << static_cast<char>(read(instruction.operands[0]));
+            std::cout << static_cast<char>(valueOf(instruction.operands[0]));
             break;
 
         case CPU::OpCode::Add:
         
-            reg(instruction.operands[0]) =   read(instruction.operands[1])
-                                           + read(instruction.operands[2]); 
+            reg(instruction.operands[0]) =   valueOf(instruction.operands[1])
+                                           + valueOf(instruction.operands[2]); 
 
             break;
 
